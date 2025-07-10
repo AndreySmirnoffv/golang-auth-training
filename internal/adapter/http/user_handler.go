@@ -34,6 +34,7 @@ func (h *UserHandler) Register(c *gin.Context) {
 	}
 
 	user := &entity.User{Email: req.Email, Password: req.Password}
+
 	err := h.uc.Register(user)
 	if err != nil {
 		if err == usecases.ErrEmailExists {

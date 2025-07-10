@@ -10,6 +10,7 @@ import (
 	myHttp "github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/http"
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/jwt"
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/usecases"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -43,6 +44,15 @@ func main() {
 	uHandler := myHttp.NewUserHandler(*uuc)
 
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "X-Refresh-Token"},
+		ExposeHeaders:    []string{"X-New-Access-Token", "X-New-Refresh-Token"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	api := r.Group("/api")
 	auth := api.Group("/auth")
