@@ -23,7 +23,7 @@
 
 ```plaintext
 /internal
-  /adapter      # Адаптеры (например, JWT, DB)
+  /adapter    # Адаптеры (например, JWT, DB)
 /entity       # Сущности домена (User и др.)
 /usecases     # Бизнес-логика (UseCase слои)
 /http         # HTTP обработчики и middleware
