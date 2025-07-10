@@ -30,6 +30,7 @@ func main() {
 
 	r := gin.Default()
 	r.POST("/register", uHandler.Register)
+	r.POST("/login", uHandler.Login)
 
 	srv := &http.Server{
 		Addr:         ":8080",
