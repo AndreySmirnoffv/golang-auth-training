@@ -31,7 +31,7 @@
 ```
 # Установка и запуск
 
-    Клонируй репозиторий:
+# Клонируй репозиторий:
 
 ```plaintext
 git clone https://github.com/yourusername/golang-auth-training.git
@@ -54,9 +54,9 @@ go run cmd/main.go
 API
 Регистрация
 
-    POST /register
+    POST /api/auth/register
 
-    Тело запроса:
+Тело запроса:
 ```json
 {
   "email": "user@example.com",
@@ -72,9 +72,9 @@ API
 ```
 Вход (Login)
 
-    POST /login
+    POST /api/auth/login
 
-    Тело запроса:
+Тело запроса:
 ```json
 {
   "email": "user@example.com",
@@ -84,6 +84,8 @@ API
 Ответ:
 ```json
 {
+  "id": "ваш_ID",
+  "email": "ваш_Email",
   "access_token": "<jwt_access_token>",
   "refresh_token": "<jwt_refresh_token>"
 }
