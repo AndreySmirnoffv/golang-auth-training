@@ -9,16 +9,6 @@ type UserModel struct {
 	Email     string
 	Password  string
 	CreatedAt time.Time
-	Payments  []PaymentModel
 }
 
 func (UserModel) TableName() string { return "users" }
-
-type PaymentModel struct {
-	ID        uint `gorm:"primaryKey"`
-	UserID    uint
-	Amount    float64
-	CreatedAt time.Time
-}
-
-func (PaymentModel) TableName() string { return "payments" }

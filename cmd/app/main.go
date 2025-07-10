@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	myDB "github.com/AndreySmirnoffv/golang-auth-training/internal/db"
+	myDB "github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/db"
+	myHttp "github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/http"
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/usecases"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
@@ -13,8 +14,9 @@ import (
 )
 
 func main() {
-	dsn := "host=... user=... password=... dbname=... port=5432 sslmode=disable TimeZone=UTC"
+	dsn := "host=localhost user=postgres password=postgres dbname=test port=5432 sslmode=disable TimeZone=UTC"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,7 +26,7 @@ func main() {
 
 	uRepo := myDB.NewUserRepoGORM(db)
 	uuc := usecases.NewUserUseCase(uRepo)
-	uHandler := myHttp.newUserHandler(uuc)
+	uHandler := myHttp.NewUserHandler(uuc)
 
 	r := gin.Default()
 	r.POST("/register", uHandler.Register)
@@ -35,6 +37,7 @@ func main() {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 5 * time.Second,
 	}
+
 	log.Println("Server starting on :8080")
 	log.Fatal(srv.ListenAndServe())
 }

@@ -12,7 +12,7 @@ type UserHandler struct {
 	uc *usecases.UserUseCase
 }
 
-func newUserHandler(uc *usecases.UserUseCase) *UserHandler {
+func NewUserHandler(uc *usecases.UserUseCase) *UserHandler {
 	return &UserHandler{uc: uc}
 }
 
@@ -26,12 +26,14 @@ func (h *UserHandler) Register(c *gin.Context) {
 		return
 	}
 	u := &entity.User{Email: req.Email, Password: req.Password}
+
 	if err := h.uc.Register(u); err != nil {
-		if err == usecases.ErrEmailExists {
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-		} else {
+		if err != usecases.ErrEmailExists {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
 		}
+
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 	c.Status(http.StatusCreated)
