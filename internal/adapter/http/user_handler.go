@@ -84,27 +84,6 @@ func (h *UserHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func (h *UserHandler) Refresh(c *gin.Context) {
-	var req struct {
-		RefreshToken string `json:"refresh_token" binding:"required"`
-	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	accessToken, refreshToken, err := h.uc.RefreshToken(req.RefreshToken)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid refresh token"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{ //in production tokens will be stored only in httponly-cookie this is a test version without UI
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	})
-}
-
 func JWTMiddleware(jwtSrv jwt.JWTService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		accessToken := pkg.ExtractBearerToken(c.GetHeader("Authorization"))

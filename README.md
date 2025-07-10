@@ -28,26 +28,28 @@
 /usecases     # Бизнес-логика (UseCase слои)
 /http         # HTTP обработчики и middleware
 /pkg          # Утилиты (хеширование паролей, экстракция токенов и др.)
-
+```
 Установка и запуск
 
     Клонируй репозиторий:
 
+```plaintext
 git clone https://github.com/yourusername/golang-auth-training.git
 cd golang-auth-training
-
+```
     Установи зависимости:
-
+```plaintext
 go mod tidy
-
+```
     Создай файл .env с настройками JWT и базы данных:
-
+```plaintext
 JWT_SECRET=your_jwt_secret_key
 DB_DSN=your_database_dsn
-
+```
     Запусти сервер:
-
+```plaintext
 go run cmd/main.go
+```
 
 API
 Регистрация
@@ -55,53 +57,37 @@ API
     POST /register
 
     Тело запроса:
-
+```json
 {
   "email": "user@example.com",
   "password": "password123"
 }
-
+```
     Ответ:
-
+```json
 {
   "id": 1,
   "email": "user@example.com"
 }
-
+```
 Вход (Login)
 
     POST /login
 
     Тело запроса:
-
+```json
 {
   "email": "user@example.com",
   "password": "password123"
 }
-
+```
     Ответ:
-
+```json
 {
   "access_token": "<jwt_access_token>",
   "refresh_token": "<jwt_refresh_token>"
 }
-
-Обновление токена (Refresh)
-
-    POST /refresh
-
-    Тело запроса:
-
-{
-  "refresh_token": "<jwt_refresh_token>"
-}
-
-    Ответ:
-
-{
-  "access_token": "<new_jwt_access_token>",
-  "refresh_token": "<new_jwt_refresh_token>"
-}
+```
 
 Middleware
 
