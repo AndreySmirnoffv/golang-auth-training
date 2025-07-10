@@ -5,9 +5,10 @@ import (
 )
 
 type UserModel struct {
-	ID        uint `gorm:"primaryKey"`
+	ID        uint64
 	Email     string
 	Password  string
+	Balance   int64
 	CreatedAt time.Time
 }
 

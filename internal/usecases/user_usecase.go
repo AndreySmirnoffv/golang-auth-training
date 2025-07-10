@@ -3,24 +3,31 @@ package usecases
 import (
 	"errors"
 
+	"github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/jwt"
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/entity"
 	"github.com/AndreySmirnoffv/golang-auth-training/pkg"
 )
 
-var ErrEmailExists = errors.New("email already registered")
-var ErrInavlidCredentials = errors.New("invalid credentials")
+var (
+	ErrEmailExists        = errors.New("email already registered")
+	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrUserNotFound       = errors.New("user not found")
+)
 
 type UserRepo interface {
-	Save(u *entity.User) error
+	Create(u *entity.User) error
 	FindByEmail(email string) (*entity.User, error)
+	Save(u *entity.User) error
+	FindByID(id uint) (*entity.User, error)
 }
 
 type UserUseCase struct {
 	repo UserRepo
+	jwt  jwt.JWTService
 }
 
-func NewUserUseCase(r UserRepo) *UserUseCase {
-	return &UserUseCase{repo: r}
+func NewUserUseCase(r UserRepo, jwtSrv jwt.JWTService) *UserUseCase {
+	return &UserUseCase{repo: r, jwt: jwtSrv}
 }
 
 func (uc *UserUseCase) Register(u *entity.User) error {
@@ -28,33 +35,49 @@ func (uc *UserUseCase) Register(u *entity.User) error {
 		return ErrEmailExists
 	}
 
-	hashedPassword, err := pkg.HashPassword(u.Password)
-
+	hashed, err := pkg.HashPassword(u.Password)
 	if err != nil {
 		return err
 	}
+	u.Password = hashed
 
-	u.Password = hashedPassword
-
-	return uc.repo.Save(u)
+	return uc.repo.Create(u)
 }
 
-func (uc *UserUseCase) Login(u *entity.User) error {
-	existing, err := uc.repo.FindByEmail(u.Email)
+func (uc *UserUseCase) Login(email, password string) (*entity.User, string, string, error) {
+	user, err := uc.repo.FindByEmail(email)
+	if err != nil || user == nil {
+		return nil, "", "", ErrInvalidCredentials
+	}
 
+	if !pkg.CheckPasswordHash(password, user.Password) {
+		return nil, "", "", ErrInvalidCredentials
+	}
+
+	accessToken, refreshToken, err := uc.jwt.GenerateTokens(user)
 	if err != nil {
-		return err
+		return nil, "", "", err
 	}
 
-	if existing == nil {
-		return ErrInavlidCredentials
+	return user, accessToken, refreshToken, nil
+}
+
+func (uc *UserUseCase) RefreshToken(refreshToken string) (string, string, error) {
+	claims, err := uc.jwt.ValidateRefreshToken(refreshToken)
+	if err != nil {
+		return "", "", err
 	}
 
-	ok := pkg.CheckPasswordHash(u.Password, existing.Password)
-
+	userIDFloat, ok := (*claims)["user_id"].(float64)
 	if !ok {
-		return ErrInavlidCredentials
+		return "", "", ErrInvalidCredentials
+	}
+	userID := uint(userIDFloat)
+
+	user, err := uc.repo.FindByID(userID)
+	if err != nil || user == nil {
+		return "", "", ErrUserNotFound
 	}
 
-	return nil
+	return uc.jwt.GenerateTokens(user)
 }

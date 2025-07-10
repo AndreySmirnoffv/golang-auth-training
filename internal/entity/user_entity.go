@@ -1,7 +1,11 @@
 package entity
 
+import "time"
+
 type User struct {
-	ID       uint
-	Email    string
-	Password string
+	ID        uint `gorm:"primaryKey;autoincrement"`
+	Email     string
+	Password  string
+	Balance   uint `gorm:"default:0"`
+	CreatedAt time.Time
 }

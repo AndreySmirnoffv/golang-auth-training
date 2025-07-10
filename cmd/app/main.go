@@ -3,12 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	myDB "github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/db"
 	myHttp "github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/http"
+	"github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/jwt"
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/usecases"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -17,6 +20,10 @@ func main() {
 	dsn := "host=localhost user=postgres password=postgres dbname=test port=5432 sslmode=disable TimeZone=UTC"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,13 +31,24 @@ func main() {
 		log.Fatal(err)
 	}
 
+	jwtSrv := jwt.NewJWTService(
+		os.Getenv("ACCESS_SECRET"),
+		os.Getenv("REFRESH_SECRET"),
+		time.Minute*15,
+		time.Hour*24*7,
+	)
+
 	uRepo := myDB.NewUserRepoGORM(db)
-	uuc := usecases.NewUserUseCase(uRepo)
-	uHandler := myHttp.NewUserHandler(uuc)
+	uuc := usecases.NewUserUseCase(uRepo, jwtSrv)
+	uHandler := myHttp.NewUserHandler(*uuc)
 
 	r := gin.Default()
-	r.POST("/register", uHandler.Register)
-	r.POST("/login", uHandler.Login)
+
+	api := r.Group("/api")
+	auth := api.Group("/auth")
+
+	auth.POST("/register", uHandler.Register)
+	auth.POST("/login", uHandler.Login)
 
 	srv := &http.Server{
 		Addr:         ":8080",
