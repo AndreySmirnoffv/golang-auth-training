@@ -29,7 +29,7 @@
 /http         # HTTP обработчики и middleware
 /pkg          # Утилиты (хеширование паролей, экстракция токенов и др.)
 ```
-Установка и запуск
+# Установка и запуск
 
     Клонируй репозиторий:
 
@@ -37,16 +37,16 @@
 git clone https://github.com/yourusername/golang-auth-training.git
 cd golang-auth-training
 ```
-    Установи зависимости:
+# Установи зависимости:
 ```plaintext
 go mod tidy
 ```
-    Создай файл .env с настройками JWT и базы данных:
+# Создай файл .env с настройками JWT и базы данных:
 ```plaintext
 JWT_SECRET=your_jwt_secret_key
 DB_DSN=your_database_dsn
 ```
-    Запусти сервер:
+# Запусти сервер:
 ```plaintext
 go run cmd/main.go
 ```
