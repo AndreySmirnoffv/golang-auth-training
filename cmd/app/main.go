@@ -18,12 +18,12 @@ import (
 )
 
 func main() {
-	dsn := "host=localhost user=postgres password=postgres dbname=test port=5432 sslmode=disable TimeZone=UTC"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
+
+	dsn := os.Getenv("DB_DSN")
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal(err)
