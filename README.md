@@ -63,7 +63,7 @@ API
   "password": "password123"
 }
 ```
-    Ответ:
+Ответ:
 ```json
 {
   "id": 1,
@@ -81,7 +81,7 @@ API
   "password": "password123"
 }
 ```
-    Ответ:
+Ответ:
 ```json
 {
   "access_token": "<jwt_access_token>",
