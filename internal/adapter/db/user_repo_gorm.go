@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/entity"
-	"github.com/AndreySmirnoffv/golang-auth-training/internal/usecases"
+	usecases "github.com/AndreySmirnoffv/golang-auth-training/internal/usecases/users"
 	"gorm.io/gorm"
 )
 

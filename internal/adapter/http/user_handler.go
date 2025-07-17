@@ -5,7 +5,7 @@ import (
 
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/jwt"
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/entity"
-	"github.com/AndreySmirnoffv/golang-auth-training/internal/usecases"
+	usecases "github.com/AndreySmirnoffv/golang-auth-training/internal/usecases/users"
 	"github.com/AndreySmirnoffv/golang-auth-training/pkg"
 	"github.com/gin-gonic/gin"
 )

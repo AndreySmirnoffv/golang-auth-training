@@ -9,7 +9,7 @@ import (
 	myDB "github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/db"
 	myHttp "github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/http"
 	"github.com/AndreySmirnoffv/golang-auth-training/internal/adapter/jwt"
-	"github.com/AndreySmirnoffv/golang-auth-training/internal/usecases"
+	usecases "github.com/AndreySmirnoffv/golang-auth-training/internal/usecases/users"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -28,7 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := db.AutoMigrate(&myDB.UserModel{}); err != nil {
+	if err := db.AutoMigrate(&myDB.UserModel{}, &myDB.PaymentModel{}); err != nil {
 		log.Fatal(err)
 	}
 
